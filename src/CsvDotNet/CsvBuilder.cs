@@ -19,11 +19,13 @@ namespace CsvDotNet
         private ImmutableArray<Func<T, object>> Fields { get; }
         private ImmutableArray<string> Headers { get; }
         private bool EndWithCrLf { get; }
-        
+        private bool IncludeHeader { get; }
+
         public long RecordCount => Records.LongCount();
         public long ColumnCount => Fields.LongCount();
 
         public string Header => Headers.Aggregate(Comma.Separated());
+
         public string Body =>
             Records
                 .Select(record => Fields
@@ -38,9 +40,10 @@ namespace CsvDotNet
             IEnumerable<T> records,
             ImmutableArray<string> headers,
             ImmutableArray<Func<T, object>> fields,
-            bool endWithCrlf = false) =>
-            (Records, Headers, Fields, EndWithCrLf) =
-            (records, headers, fields, endWithCrlf);
+            bool endWithCrlf = false,
+            bool includeHeader = true) =>
+            (Records, Headers, Fields, EndWithCrLf, IncludeHeader) =
+            (records, headers, fields, endWithCrlf, includeHeader);
 
         public CsvBuilder<T> Field(string headerName, Func<T, object> field) =>
             new CsvBuilder<T>(this.Records,
@@ -48,14 +51,13 @@ namespace CsvDotNet
                 Fields.Add(field));
 
         public CsvBuilder<T> EndingCrLf() =>
-            new CsvBuilder<T>(
-                this.Records,
-                Headers,
-                Fields,
-                true);
+            new CsvBuilder<T>(Records, Headers, Fields, true, IncludeHeader);
+
+        public CsvBuilder<T> ExcludeHeader() =>
+            new CsvBuilder<T>(Records, Headers, Fields, EndWithCrLf, false);
 
         public override string ToString() =>
-            CrLf.Separated()(Header, Body);
+            IncludeHeader ? CrLf.Separated()(Header, Body) : Body;
 
         public Task ToFile(string filename) => File.WriteAllTextAsync(filename, this.ToString());
     }

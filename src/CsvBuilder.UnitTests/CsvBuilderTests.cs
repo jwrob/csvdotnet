@@ -21,6 +21,7 @@ namespace CsvBuilder.UnitTests
 
         private static string ExpectedResult => "head1,head2\r\nfield1,field1-00\r\nfield2,field2-00";
         private static string ExpectedResultCrLf => "head1,head2\r\nfield1,field1-00\r\nfield2,field2-00\r\n";
+        private static string ExpectedResultNoHeader => "field1,field1-00\r\nfield2,field2-00";
 
         [Fact]
         public void CsvExtensionReturnsCsvBuilder()
@@ -91,6 +92,31 @@ namespace CsvBuilder.UnitTests
                 .ToString();
             
             Assert.Equal(ExpectedResultCrLf, generatedCsv);
+        }
+
+        [Fact]
+        public void CsvBuilder_ExcludeHeader_ExcludesHeader()
+        {
+            var generatedCsv = Field1Field2
+                .Csv()
+                .Field("head1", f => f)
+                .Field("head2", f => $"{f}-00")
+                .ExcludeHeader()
+                .ToString();
+            
+            Assert.Equal(ExpectedResultNoHeader, generatedCsv);
+        }
+
+        [Theory]
+        [InlineData("hello", "hello")]
+        [InlineData("hello\"", "\"hello\"\"\"")]
+        [InlineData("hello\n", "\"hello\n\"")]
+        [InlineData("hello\r", "\"hello\r\"")]
+        [InlineData("hello,", "\"hello,\"")]
+        [InlineData("\"h,el\nl\ro", "\"\"\"h,el\nl\ro\"")]
+        public void Escape_Escapes_DoubleQuotes(string input, string expectedOut)
+        {
+            Assert.Equal(expectedOut, input.Escape());
         }
     }
 }

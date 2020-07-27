@@ -19,9 +19,7 @@ namespace CsvBuilder.UnitTests
             "field2"
         };
 
-        private static string ExpectedResult => @"head1,head2
-field1,field1-00
-field2,field2-00";
+        private static string ExpectedResult => "head1,head2\r\nfield1,field1-00\r\nfield2,field2-00";
 
         [Fact]
         public void CsvExtensionReturnsCsvBuilder()
@@ -40,9 +38,7 @@ field2,field2-00";
             var builder = FooBarBas.Csv();
 
             Assert.Equal(3, builder.RecordCount);
-            var body = @"foo
-bar
-bas";
+            var body = "foo\r\nbar\r\nbas";
             builder = builder.Field("Name", info => info);
             Assert.Equal(body, builder.Body);
         }

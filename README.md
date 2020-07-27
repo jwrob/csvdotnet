@@ -1,7 +1,8 @@
 # csvdotnet
 
-A simple, fluent, CSV writer for dotnet core 3.1
-[![Coverage Status](https://coveralls.io/repos/github/jwrob/csvdotnet/badge.svg?branch=)](https://coveralls.io/github/jwrob/csvdotnet?branch=)
+A simple, fluent, CSV writer for dotnet core 3.1  
+[![Coverage Status](https://coveralls.io/repos/github/jwrob/csvdotnet/badge.svg?branch=)](https://coveralls.io/github/jwrob/csvdotnet?branch=)  
+[![codecov](https://codecov.io/gh/jwrob/csvdotnet/branch/primary/graph/badge.svg)](https://codecov.io/gh/jwrob/csvdotnet)  
 
 # Usage
 

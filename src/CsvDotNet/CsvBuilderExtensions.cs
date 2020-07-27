@@ -11,7 +11,5 @@ namespace CsvDotNet
         internal static Func<string, string, string> Separated(this string separator) =>
             (left, right) =>
                 left == string.Empty ? right : $"{left}{separator}{right}";
-        
-        
     }
 }

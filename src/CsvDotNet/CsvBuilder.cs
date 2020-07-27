@@ -18,6 +18,7 @@ namespace CsvDotNet
         private IEnumerable<T> Records { get; }
         private ImmutableArray<Func<T, object>> Fields { get; }
         private ImmutableArray<string> Headers { get; }
+        private bool EndWithCrLf { get; }
         
         public long RecordCount => Records.LongCount();
         public long ColumnCount => Fields.LongCount();
@@ -28,7 +29,7 @@ namespace CsvDotNet
                 .Select(record => Fields
                     .Select(func => func(record).ToString())
                     .Aggregate(Comma.Separated()))
-                .Aggregate(CrLf.Separated());
+                .Aggregate(CrLf.Separated()) + (EndWithCrLf ? CrLf : string.Empty);
 
         internal CsvBuilder(IEnumerable<T> records) :
             this(records, ImmutableArray<string>.Empty, ImmutableArray<Func<T, object>>.Empty) { }
@@ -36,14 +37,22 @@ namespace CsvDotNet
         private CsvBuilder(
             IEnumerable<T> records,
             ImmutableArray<string> headers,
-            ImmutableArray<Func<T, object>> fields) =>
-            (Records, Headers, Fields) =
-            (records, headers, fields);
+            ImmutableArray<Func<T, object>> fields,
+            bool endWithCrlf = false) =>
+            (Records, Headers, Fields, EndWithCrLf) =
+            (records, headers, fields, endWithCrlf);
 
         public CsvBuilder<T> Field(string headerName, Func<T, object> field) =>
             new CsvBuilder<T>(this.Records,
                 Headers.Add(headerName),
-                ImmutableArray.Create<Func<T, object>>().AddRange(this.Fields).Add(field));
+                Fields.Add(field));
+
+        public CsvBuilder<T> EndingCrLf() =>
+            new CsvBuilder<T>(
+                this.Records,
+                Headers,
+                Fields,
+                true);
 
         public override string ToString() =>
             CrLf.Separated()(Header, Body);

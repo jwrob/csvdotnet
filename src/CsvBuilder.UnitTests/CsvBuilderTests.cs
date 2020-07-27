@@ -20,6 +20,7 @@ namespace CsvBuilder.UnitTests
         };
 
         private static string ExpectedResult => "head1,head2\r\nfield1,field1-00\r\nfield2,field2-00";
+        private static string ExpectedResultCrLf => "head1,head2\r\nfield1,field1-00\r\nfield2,field2-00\r\n";
 
         [Fact]
         public void CsvExtensionReturnsCsvBuilder()
@@ -77,6 +78,19 @@ namespace CsvBuilder.UnitTests
                 .ToString();
             
             Assert.Equal(ExpectedResult, generatedCsv);
+        }
+
+        [Fact]
+        public void CsvBuilder_EndsWithCrLf_ContainsCrLfLineEnding()
+        {
+            var generatedCsv = Field1Field2
+                .Csv()
+                .Field("head1", f => f)
+                .Field("head2", f => $"{f}-00")
+                .EndingCrLf()
+                .ToString();
+            
+            Assert.Equal(ExpectedResultCrLf, generatedCsv);
         }
     }
 }
